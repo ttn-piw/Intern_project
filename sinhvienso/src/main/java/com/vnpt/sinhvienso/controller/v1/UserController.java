@@ -4,9 +4,12 @@ import com.vnpt.sinhvienso.dto.request.LoginRequest;
 import com.vnpt.sinhvienso.dto.response.ApiResponse;
 import com.vnpt.sinhvienso.dto.response.AuthResponse;
 import com.vnpt.sinhvienso.dto.response.UserResponse;
+import com.vnpt.sinhvienso.service.AuthenticationService;
 import com.vnpt.sinhvienso.service.StudentService;
 import com.vnpt.sinhvienso.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +21,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/users")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserController {
-    @Autowired
-    private UserService userService;
+    UserService userService;
+    StudentService studentService;
 
     @Autowired
-    private StudentService studentService;
+    AuthenticationService authenticationService;
 
     Logger logger  = LoggerFactory.getLogger(UserController.class);
 
@@ -49,7 +53,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        AuthResponse response = studentService.login(request);
+        AuthResponse response = authenticationService.login(request);
         HttpStatus status = response.getAuthenticated() ? HttpStatus.OK : HttpStatus.UNAUTHORIZED;
         return ResponseEntity.status(status).body(response);
     }

@@ -22,24 +22,6 @@ public class StudentService {
         return studentRepository.findAll();
     }
 
-    public AuthResponse login(LoginRequest request) {
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-
-        String email = request.getEmail();
-        String password = request.getPassword();
-
-        Student student = studentRepository.getStudentsByEmail(email);
-
-        if (student == null) {
-            return new AuthResponse(401, "Email does not exist", false);
-        }
-
-        if (!passwordEncoder.matches(password,student.getPassword())) {
-            return new AuthResponse(401, "Invalid password", false);
-        }
-
-        return new AuthResponse(200, "Login successful", true);
-    }
 
 //
 //    public Page<StudentReponse> getStudentsService(String key, Pageable pageable){
