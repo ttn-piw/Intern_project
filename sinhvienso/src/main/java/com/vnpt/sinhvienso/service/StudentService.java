@@ -7,6 +7,8 @@ import com.vnpt.sinhvienso.dto.response.StudentResponse;
 import com.vnpt.sinhvienso.repository.StudentRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +23,8 @@ public class StudentService {
     }
 
     public AuthResponse login(LoginRequest request) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+
         String email = request.getEmail();
         String password = request.getPassword();
 
@@ -30,7 +34,7 @@ public class StudentService {
             return new AuthResponse(401, "Email does not exist", false);
         }
 
-        if (!password.equals(student.getPassword())) {
+        if (!passwordEncoder.matches(password,student.getPassword())) {
             return new AuthResponse(401, "Invalid password", false);
         }
 
