@@ -1,6 +1,7 @@
 package com.vnpt.sinhvienso.service;
 
 import com.vnpt.sinhvienso.document.User;
+import com.vnpt.sinhvienso.dto.request.LoginRequest;
 import com.vnpt.sinhvienso.dto.response.UserResponse;
 import com.vnpt.sinhvienso.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,8 +20,8 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 public class UserService {
-//    @Autowired
-//    UserResponseRepository UserResponseRepository;
+    @Autowired
+    UserRepository userResponseRepository;
 
     public Page<UserResponse> getUsers(String key, Pageable pageable){
         // Mock user data
