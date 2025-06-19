@@ -33,9 +33,8 @@ public class Student {
     String email;
 
     String password;
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-    Date createAt;
+  
+    String createAt;
 
     public Student(Student otherStudent){
         this.id = otherStudent.getStudentId();
