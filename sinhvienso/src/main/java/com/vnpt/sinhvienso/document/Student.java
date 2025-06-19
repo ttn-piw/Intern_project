@@ -33,6 +33,17 @@ public class Student {
     String email;
 
     String password;
-
+  
     String createAt;
+
+    public Student(Student otherStudent){
+        this.id = otherStudent.getStudentId();
+        this.role = otherStudent.getRole();
+        this.studentId = otherStudent.getStudentId();
+        this.schoolCode = otherStudent.getSchoolCode();
+        this.name = otherStudent.getName();
+        this.email = otherStudent.getEmail();
+        this.gender = otherStudent.getGender();
+        this.password = otherStudent.getPassword();
+    }
 }
