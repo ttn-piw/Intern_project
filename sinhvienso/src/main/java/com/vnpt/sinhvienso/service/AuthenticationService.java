@@ -56,7 +56,10 @@ public class AuthenticationService {
     }
 
     private String generateToken(String username){
+        //Build header with HS512 Algorithm
         JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
+
+        //Define Claim
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(username)
                 .issuer("sinhvienso.com")
@@ -65,8 +68,10 @@ public class AuthenticationService {
                 .claim("customerClaim", "Customer")
                 .build();
 
+        //Payload
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
 
+        //JWT = header + payload
         JWSObject jwsObject = new JWSObject(jwsHeader,payload);
 
         try {
