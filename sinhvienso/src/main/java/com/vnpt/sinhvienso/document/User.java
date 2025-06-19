@@ -16,9 +16,14 @@ import java.time.LocalDate;
 public class User {
     @Id
     String id;
+
     String name;
+
     String email;
+
     String password;
+
     String role;
+
     LocalDate birthday;
 }

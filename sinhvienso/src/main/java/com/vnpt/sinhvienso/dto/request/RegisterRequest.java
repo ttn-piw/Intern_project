@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserRegisterRequest {
+public class RegisterRequest {
 
     @NotBlank(message = "Tên không được để trống")
     @Size(max = 100, message = "Tên không được dài quá 100 ký tự")

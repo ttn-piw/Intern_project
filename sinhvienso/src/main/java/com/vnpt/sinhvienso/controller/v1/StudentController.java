@@ -1,17 +1,12 @@
 package com.vnpt.sinhvienso.controller.v1;
 
 import com.vnpt.sinhvienso.document.Student;
-import com.vnpt.sinhvienso.dto.response.UserResponse;
-import com.vnpt.sinhvienso.service.StudentService;
+import com.vnpt.sinhvienso.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.coyote.Response;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,13 +17,13 @@ import java.util.List;
 @RequestMapping("/api/v1/students")
 public class StudentController {
     @Autowired
-    StudentService studentService;
+    UserService userService;
 
-    Logger logger = LoggerFactory.getLogger(StudentController.class);
+    Logger logger  = LoggerFactory.getLogger(AuthController.class);
 
     @GetMapping("")
     public List<Student> getStudents(){
-        return studentService.getStudentsService();
+        return userService.getUserService();
     }
 //    @GetMapping("")
 //    public ResponseEntity<Object> getUsers(HttpServletRequest httpServletRequest,
@@ -49,6 +44,7 @@ public class StudentController {
 //           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("FAIL: "+ ex.getMessage());
 //       }
 //    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getStudentById (HttpServletRequest request, @PathVariable(value = "id", required = true) ObjectId id){
         String requestPath = request.getMethod() + " " + request.getRequestURI() + (request.getQueryString() != null
@@ -59,7 +55,7 @@ public class StudentController {
         Boolean isAuth = true;
         try {
             if (isAuth)
-                return ResponseEntity.ok().body(studentService.getStudentById(id));
+                return ResponseEntity.ok().body(userService.getUserById(id));
             else
                 return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body("FAIL: Token has validated");
         } catch (Exception exception){

@@ -12,11 +12,16 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StudentResponse {
     String id;
-    String role;
-    String studentId;
-    String schoolCode;
-    String name;
-    String gender;
-    String email;
 
+    String role;
+
+    String studentId;
+
+    String schoolCode;
+
+    String name;
+
+    String gender;
+
+    String email;
 }

@@ -37,7 +37,7 @@ public class Student {
     String createAt;
 
     public Student(Student otherStudent){
-        this.id = otherStudent.getStudentId();
+        this.id = otherStudent.getId();
         this.role = otherStudent.getRole();
         this.studentId = otherStudent.getStudentId();
         this.schoolCode = otherStudent.getSchoolCode();

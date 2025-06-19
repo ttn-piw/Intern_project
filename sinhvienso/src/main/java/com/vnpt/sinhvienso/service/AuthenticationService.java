@@ -2,10 +2,11 @@ package com.vnpt.sinhvienso.service;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
-import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.vnpt.sinhvienso.document.Student;
 import com.vnpt.sinhvienso.dto.request.LoginRequest;
+import com.vnpt.sinhvienso.dto.request.RegisterRequest;
+import com.vnpt.sinhvienso.dto.response.ApiResponse;
 import com.vnpt.sinhvienso.dto.response.AuthResponse;
 import com.vnpt.sinhvienso.repository.StudentRepository;
 import lombok.experimental.NonFinal;
@@ -15,15 +16,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Slf4j
 @Service
 public class AuthenticationService {
+
     @Autowired
     StudentRepository studentRepository;
 
@@ -34,9 +34,9 @@ public class AuthenticationService {
     @Value("${jwt.expiration}")
     private long expiration;
 
-    public AuthResponse login(LoginRequest request) {
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
+    public AuthResponse login(LoginRequest request) {
         String email = request.getEmail();
         String password = request.getPassword();
 
@@ -81,5 +81,31 @@ public class AuthenticationService {
             log.error("Cannot create token", e);
             throw new RuntimeException(e);
         }
+    }
+
+    public ApiResponse register(RegisterRequest request) {
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            return new ApiResponse(401, "fail", "Confirm password incorrect!");
+        }
+
+        if (studentRepository.existsByEmail(request.getEmail())) {
+            return new ApiResponse(401, "fail", "Mail already exists!");
+        }
+
+        Student user = new Student();
+        user.setRole(request.getRole());
+        user.setStudentId(request.getStudentId());
+        user.setSchoolCode(request.getSchoolCode());
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setGender(request.getGender());
+        user.setCreateAt(formatter.format(new Date()));
+
+        studentRepository.save(user);
+
+        return new ApiResponse(200, "success", "Registration successful!");
     }
 }
