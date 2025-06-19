@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface StudentRepository extends MongoRepository<Student, String> {
     List<Student> findByName(String name);
+    boolean existsByEmail(String email);
 }

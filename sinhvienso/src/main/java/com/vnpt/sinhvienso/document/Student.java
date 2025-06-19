@@ -34,7 +34,5 @@ public class Student {
 
     String password;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-    Date createAt;
-
+    String createAt;
 }
