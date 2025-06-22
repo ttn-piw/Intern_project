@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Document(collection = "user")
 public class User {
     @Id
-    String id;
+    String _id;
 
     String name;
 

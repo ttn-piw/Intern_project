@@ -2,12 +2,16 @@ package com.vnpt.sinhvienso.service;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import com.vnpt.sinhvienso.document.Student;
+import com.vnpt.sinhvienso.dto.request.IntrospectRequest;
 import com.vnpt.sinhvienso.dto.request.LoginRequest;
 import com.vnpt.sinhvienso.dto.request.RegisterRequest;
 import com.vnpt.sinhvienso.dto.response.ApiResponse;
 import com.vnpt.sinhvienso.dto.response.AuthResponse;
+import com.vnpt.sinhvienso.dto.response.IntrospectResponse;
 import com.vnpt.sinhvienso.repository.StudentRepository;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +20,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -37,10 +44,15 @@ public class AuthenticationService {
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
     public AuthResponse login(LoginRequest request) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+
         String email = request.getEmail();
         String password = request.getPassword();
 
         Student student = studentRepository.getStudentsByEmail(email);
+        student.setPassword(passwordEncoder.encode(password));
+        studentRepository.save(student);
+
         var token = generateToken(email);
 
         if (student == null) {
@@ -107,5 +119,23 @@ public class AuthenticationService {
         studentRepository.save(user);
 
         return new ApiResponse(200, "success", "Registration successful!");
+    }
+
+    public IntrospectResponse introspect(@RequestBody IntrospectRequest request)
+            throws JOSEException, ParseException {
+
+        var token = request.getToken();
+
+        JWSVerifier jwsVerifier = new MACVerifier(SIGNER_KEY.getBytes());
+
+        SignedJWT signedJWT = SignedJWT.parse(token);
+
+        Date expireTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+        var verified = signedJWT.verify(jwsVerifier);
+
+        return IntrospectResponse.builder()
+                .valid(verified && expireTime.after(new Date()))
+                .build();
     }
 }
