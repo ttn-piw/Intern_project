@@ -19,7 +19,7 @@ public class StudentController {
     @Autowired
     UserService userService;
 
-    Logger logger  = LoggerFactory.getLogger(AuthController.class);
+    Logger logger  = LoggerFactory.getLogger(StudentController.class);
 
     @GetMapping("")
     public List<Student> getStudents(){
