@@ -1,6 +1,9 @@
 package com.vnpt.sinhvienso.controller.v1;
 
 import com.vnpt.sinhvienso.document.Student;
+import com.vnpt.sinhvienso.dto.response.ApiResponseStudent;
+import com.vnpt.sinhvienso.dto.response.ApiResponseTest;
+import com.vnpt.sinhvienso.dto.response.StudentResponse;
 import com.vnpt.sinhvienso.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.bson.types.ObjectId;
@@ -22,8 +25,13 @@ public class StudentController {
     Logger logger  = LoggerFactory.getLogger(StudentController.class);
 
     @GetMapping("")
-    public List<Student> getStudents(){
-        return userService.getUserService();
+    public ApiResponseStudent<StudentResponse> getStudents(){
+
+        var result = userService.getUserService();
+
+        return ApiResponseStudent.<StudentResponse>builder()
+                .data(result)
+                .build();
     }
 //    @GetMapping("")
 //    public ResponseEntity<Object> getUsers(HttpServletRequest httpServletRequest,

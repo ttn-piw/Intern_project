@@ -10,10 +10,10 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ApiResponseTest<T> {
+public class ApiResponseStudent<T> {
 
     @Builder.Default
     private int code = 1000;
 
-    T result;
+    List<T> data;
 }
