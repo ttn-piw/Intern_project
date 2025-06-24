@@ -3,6 +3,8 @@ package com.vnpt.sinhvienso.dto.response;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -12,8 +14,6 @@ public class ApiResponseTest<T> {
 
     @Builder.Default
     private int code = 1000;
-
-    String message;
 
     T result;
 }

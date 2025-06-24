@@ -50,8 +50,10 @@ public class AuthenticationService {
         String password = request.getPassword();
 
         Student student = studentRepository.getStudentsByEmail(email);
-        student.setPassword(passwordEncoder.encode(password));
-        studentRepository.save(student);
+
+//        HashPassword
+//        student.setPassword(passwordEncoder.encode(password));
+//        studentRepository.save(student);
 
         var token = generateToken(email);
 
