@@ -26,15 +26,20 @@ public class SecurityConfig {
      private final String PUBLIC_ENDPOINT[] = {"" +
             "/api/v1/auth/login",
             "/api/v1/auth/register",
-            "/api/v1/auth/introspect"
+            "/api/v1/auth/introspect",
     };
+
+     private final String ADMIN_ENDPOINT[] = {
+             "api/v1/students",
+             "api/v1/posts"
+     };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         // Permit access endpoint
         httpSecurity.authorizeHttpRequests(request -> request
                 .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT).permitAll()   //PUBLIC_ENDPOINT with POST
-                .requestMatchers(HttpMethod.GET,"/api/v1/students").hasAuthority("SCOPE_ADMIN")  //FORBIDEN request without SCOPE_ADMIN AUTHENTICATED
+                .requestMatchers(HttpMethod.GET,ADMIN_ENDPOINT).hasAuthority("SCOPE_ADMIN")  //BAN request without SCOPE_ADMIN AUTHENTICATED
                 .anyRequest().authenticated());
 
         //Access the others endpoint with token
