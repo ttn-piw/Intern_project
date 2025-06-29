@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Set;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,7 +15,7 @@ import lombok.experimental.FieldDefaults;
 public class StudentResponse {
     String id;
 
-    String role;
+    Set<String> roles;
 
     String studentId;
 

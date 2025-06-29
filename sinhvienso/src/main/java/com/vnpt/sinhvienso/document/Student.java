@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -20,7 +21,7 @@ public class Student {
     @Id
     String id;
 
-    String role;
+    Set<String> roles;
 
     String studentId;
 
@@ -38,7 +39,7 @@ public class Student {
 
     public Student(Student otherStudent){
         this.id = otherStudent.getId();
-        this.role = otherStudent.getRole();
+        this.roles = otherStudent.getRoles();
         this.studentId = otherStudent.getStudentId();
         this.schoolCode = otherStudent.getSchoolCode();
         this.name = otherStudent.getName();

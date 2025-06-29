@@ -34,7 +34,8 @@ public class SecurityConfig {
         // Permit access endpoint
         httpSecurity.authorizeHttpRequests(request -> request
                 .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT).permitAll()   //PUBLIC_ENDPOINT with POST
-                .anyRequest().authenticated());                                   //
+                .requestMatchers(HttpMethod.GET,"/api/v1/students").hasAuthority("SCOPE_ADMIN")  //FORBIDEN request without SCOPE_ADMIN AUTHENTICATED
+                .anyRequest().authenticated());
 
         //Access the others endpoint with token
         httpSecurity.oauth2ResourceServer(oauth2 ->

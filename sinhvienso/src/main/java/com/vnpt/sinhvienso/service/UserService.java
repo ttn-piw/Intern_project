@@ -8,6 +8,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -21,14 +22,14 @@ public class UserService {
         List<Student> dtoStudentResponse = studentRepository.findAll();
 
         return dtoStudentResponse.stream()
-                .map(student -> new StudentResponse(student.getId(), student.getRole(), student.getStudentId(), student.getSchoolCode(),
+                .map(student -> new StudentResponse(student.getId(), Collections.singleton(student.getRoles().toString()), student.getStudentId(), student.getSchoolCode(),
                                                     student.getName(), student.getGender(), student.getEmail()))
                 .collect(toList());
     }
     public StudentResponse getUserById(ObjectId id){
         // DTO student
          Student student = new Student(studentRepository.getStudentById(id));
-         StudentResponse studentDto = new StudentResponse(student.getId(), student.getRole(),
+         StudentResponse studentDto = new StudentResponse(student.getId(), Collections.singleton(student.getRoles().toString()),
                                             student.getStudentId(), student.getSchoolCode(),
                                             student.getName(), student.getGender(), student.getEmail());
 

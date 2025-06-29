@@ -6,6 +6,7 @@ import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.vnpt.sinhvienso.document.Student;
+import com.vnpt.sinhvienso.document.User;
 import com.vnpt.sinhvienso.dto.request.IntrospectRequest;
 import com.vnpt.sinhvienso.dto.request.LoginRequest;
 import com.vnpt.sinhvienso.dto.request.RegisterRequest;
@@ -20,12 +21,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
+import java.util.StringJoiner;
 
 @Slf4j
 @Service
@@ -55,36 +59,31 @@ public class AuthenticationService {
 //        student.setPassword(passwordEncoder.encode(password));
 //        studentRepository.save(student);
 
-        var token = generateToken(email);
-
+        var token = generateToken(student);
+        //Check email exist
         if (student == null) {
             return new AuthResponse(401, "Email does not exist", false,"","",0);
         }
-
+        //Check valid password
         if (!passwordEncoder.matches(password,student.getPassword())) {
             return new AuthResponse(401, "Invalid password", false, "","",0);
         }
-
         return new AuthResponse(200, "Login successful", true, token,"Bearer", expiration);
-
     }
 
-    private String generateToken(String username){
+    private String generateToken(Student student){
         //Build header with HS512 Algorithm
         JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
-
         //Define Claim
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(username)
-                .issuer("sinhvienso.com")
+                .subject(student.getEmail())
+                .issuer("trungnguyen.svso.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(System.currentTimeMillis() + expiration))
-                .claim("customerClaim", "Customer")
+                .claim("scope", buildScope(student))
                 .build();
-
         //Payload
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
-
         //JWT = header + payload
         JWSObject jwsObject = new JWSObject(jwsHeader,payload);
 
@@ -109,7 +108,7 @@ public class AuthenticationService {
         }
 
         Student user = new Student();
-        user.setRole(request.getRole());
+        user.setRoles(Collections.singleton(request.getRole()));
         user.setStudentId(request.getStudentId());
         user.setSchoolCode(request.getSchoolCode());
         user.setName(request.getName());
@@ -122,22 +121,26 @@ public class AuthenticationService {
 
         return new ApiResponse(200, "success", "Registration successful!");
     }
-
+    //Check token valid
     public IntrospectResponse introspect(@RequestBody IntrospectRequest request)
             throws JOSEException, ParseException {
 
         var token = request.getToken();
 
         JWSVerifier jwsVerifier = new MACVerifier(SIGNER_KEY.getBytes());
-
         SignedJWT signedJWT = SignedJWT.parse(token);
-
         Date expireTime = signedJWT.getJWTClaimsSet().getExpirationTime();
-
         var verified = signedJWT.verify(jwsVerifier);
 
         return IntrospectResponse.builder()
                 .valid(verified && expireTime.after(new Date()))
                 .build();
+    }
+    private String buildScope(Student student){
+        StringJoiner stringJoiner = new StringJoiner(" ");
+        if (!CollectionUtils.isEmpty(student.getRoles()))
+            student.getRoles().forEach(stringJoiner::add);
+
+        return stringJoiner.toString();
     }
 }
