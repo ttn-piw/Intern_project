@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,8 +26,10 @@ public class StudentController {
     UserService userService;
 
     Logger logger  = LoggerFactory.getLogger(StudentController.class);
+    
 
     @GetMapping("")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public ApiResponseStudent<StudentResponse> getStudents(){
         //SecurityContext payload
         var authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -58,11 +62,15 @@ public class StudentController {
 //       }
 //    }
 
+
     @GetMapping("/{id}")
+    @PostAuthorize("returnObject.body.email == authentication.name")
     public ResponseEntity<?> getStudentById (HttpServletRequest request, @PathVariable(value = "id", required = true) ObjectId id){
         String requestPath = request.getMethod() + " " + request.getRequestURI() + (request.getQueryString() != null
                                                                                     ? "?" + request.getQueryString()
                                                                                     : "");
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        logger.info("Username: {}", authentication.getName());
         logger.info("STUDENT"+ requestPath);
 
         Boolean isAuth = true;
