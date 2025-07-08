@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -18,6 +19,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Value("${jwt.signerKey}")
@@ -39,7 +41,7 @@ public class SecurityConfig {
         // Permit access endpoint
         httpSecurity.authorizeHttpRequests(request -> request
                 .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT).permitAll()   //PUBLIC_ENDPOINT with POST
-                .requestMatchers(HttpMethod.GET,ADMIN_ENDPOINT).hasAuthority("SCOPE_ADMIN")  //BAN request without SCOPE_ADMIN AUTHENTICATED
+//                .requestMatchers(HttpMethod.GET,ADMIN_ENDPOINT).hasAuthority("SCOPE_ADMIN")  //BAN request without SCOPE_ADMIN AUTHENTICATED
                 .anyRequest().authenticated());
 
         //Access the others endpoint with token
